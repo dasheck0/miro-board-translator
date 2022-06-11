@@ -2,6 +2,11 @@
   "name": "miro-board-translator",
   "version": "0.1.0",
   "licence": "MIT",
+  "description": "This is a miro plugin that translates items of miro boards using deepl.com",
+  "author": {
+    "name": "Stefan Neidig",
+    "email": "stefan@rpdev.net"
+  },
   "scripts": {
     "start": "vite",
     "build": "vite build",
