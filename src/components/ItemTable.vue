@@ -28,8 +28,6 @@ export default defineComponent({
       })
     );
 
-    console.log("itesm", items);
-
     return {
       items,
     };

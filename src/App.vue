@@ -17,7 +17,6 @@
       </div>
     </div>
 
-    <!-- <Transition name="slide"> -->
     <div v-if="tabActive === 0">
       <div class="grid">
         <div class="cs1 ce12" style="margin-top: var(--space-medium)">
@@ -73,7 +72,6 @@
         </button>
       </div>
     </div>
-    <!-- </Transition> -->
   </div>
 </template>
 
@@ -132,15 +130,11 @@ export default defineComponent({
       const getRelevanteItemTypes = ["sticky_note", "shape", "text", "card", "frame"];
       const selection = await miro.board.getSelection();
 
-      console.log("tanslage", selection);
-
       await Promise.all(
         selection.map(async (item) => {
           if (getRelevanteItemTypes.includes(item.type)) {
             const text = this.getTextFromItem(item);
             const translatedText = await this.translateText(text);
-
-  console.log("hfdjkhfdjk", text, translatedText);
 
             this.setItemToText(item, translatedText);
             await item.sync();
