@@ -11,7 +11,14 @@
     "start": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "changelog": "conventional-changelog -i CHANGELOG.md -s -r 0",
+    "patch": "npm --no-git-tag-version version patch",
+    "postpatch": "git add package* && git commit -m \"chore: set version to $npm_package_version\" package*",
+    "minor": "npm --no-git-tag-version version minor",
+    "postminor": "git add package* && git commit -m \"chore: set version to $npm_package_version\" package*",
+    "major": "npm --no-git-tag-version version major",
+    "postmajor": "git add package* && git commit -m \"chore: set version to $npm_package_version\" package*"
   },
   "dependencies": {
     "deepl": "^1.0.13",

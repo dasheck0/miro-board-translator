@@ -36,6 +36,7 @@ We enforce the conventional commit message style. This allows us to generate a c
 ## Changelog
 <!-- section: Changelog --> 
 <!-- Describe that changes made to the software by version. Note that this should be done automatically. -->
+See [changelog](./CHANGELOG.md) file.
 
 ## Contributing
 <!-- section: Contributing -->
