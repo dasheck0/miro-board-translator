@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "vite build && mv ./dist/index.html ./dist/app.html",
+    "build": "vite build",
     "serve": "vite preview",
     "prepare": "husky install",
     "changelog": "conventional-changelog -i CHANGELOG.md -s -r 0",
