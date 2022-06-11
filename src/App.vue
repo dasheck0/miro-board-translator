@@ -1,77 +1,81 @@
 <template>
-  <div>
-    <div class="tabs">
-      <div class="tabs-header-list">
-        <div
-          v-for="(tab, index) in tabs"
-          :key="tab"
-          :tabIndex="index"
-          class="tab"
-          :class="tabActive === index ? 'tab-active' : ''"
-          @click="() => (tabActive = index)"
-        >
-          <div class="tab-text tab-badge">
-            {{ tab }}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="tabActive === 0">
-      <div class="grid">
-        <div class="cs1 ce12" style="margin-top: var(--space-medium)">
-          <button
-            className="button button-primary button-small"
-            @click="translate"
-            :disabled="!selection || selection.length === 0"
+  <div class="app">
+    <div class="content">
+      <div class="tabs">
+        <div class="tabs-header-list">
+          <div
+            v-for="(tab, index) in tabs"
+            :key="tab"
+            :tabIndex="index"
+            class="tab"
+            :class="tabActive === index ? 'tab-active' : ''"
+            @click="() => (tabActive = index)"
           >
-            Translate selection
-          </button>
-        </div>
-        <div class="cs11 ce12" style="margin-top: var(--space-medium)" v-if="false">
-          <button
-            class="button-icon icon-refresh"
-            type="button"
-            @click="fetchCurrentSelection"
-          ></button>
-        </div>
-        <div class="cs1 ce12">
-          <div class="p-medium selection-header">
-            <div><strong>Current selection</strong></div>
-            <div>
-              <strong
-                >{{ selection?.length || 0 }}
-                {{ pluralize(selection?.length || 0) }}</strong
-              >
+            <div class="tab-text tab-badge">
+              {{ tab }}
             </div>
           </div>
-          <div class="p-medium" v-if="selection && selection.length > 0">
-            <ItemTable :items="selection" />
+        </div>
+      </div>
+
+      <div v-if="tabActive === 0">
+        <div class="grid">
+          <div class="cs1 ce12" style="margin-top: var(--space-medium)">
+            <button
+              className="button button-primary button-small"
+              @click="translate"
+              :disabled="!selection || selection.length === 0"
+            >
+              Translate selection
+            </button>
           </div>
-          <p class="p-medium" v-else>Nothing selected</p>
+          <div class="cs11 ce12" style="margin-top: var(--space-medium)" v-if="false">
+            <button
+              class="button-icon icon-refresh"
+              type="button"
+              @click="fetchCurrentSelection"
+            ></button>
+          </div>
+          <div class="cs1 ce12">
+            <div class="p-medium selection-header">
+              <div><strong>Current selection</strong></div>
+              <div>
+                <strong
+                  >{{ selection?.length || 0 }}
+                  {{ pluralizeItems(selection?.length || 0) }}</strong
+                >
+              </div>
+            </div>
+            <div class="p-medium" v-if="selection && selection.length > 0">
+              <ItemTable :items="selection" />
+            </div>
+            <p class="p-medium" v-else>Nothing selected</p>
+          </div>
+        </div>
+      </div>
+      <div v-else>
+        <div className="cs1 e12" style="margin-top: var(--space-medium)">
+          <div class="header">Target Language</div>
+          <select className="select" v-model="targetLanguage">
+            <option v-for="language in availableLanguages" :value="language">
+              {{ getFullLanguagesNameFromShortHandle(language) }}
+            </option>
+          </select>
+        </div>
+
+        <div className="cs1 e12">
+          <div class="header">Auth key</div>
+          <input type="password" className="input" v-model="authKey" />
+        </div>
+        <div class="cs1 ce12" style="margin-top: var(--space-medium)">
+          <button className="button button-primary button-small" @click="saveSettings">
+            Save
+          </button>
         </div>
       </div>
     </div>
-    <div v-else>
-      <div className="cs1 e12" style="margin-top: var(--space-medium)">
-        <div class="header">Target Language</div>
-        <select className="select" v-model="targetLanguage">
-          <option v-for="language in availableLanguages" :value="language">
-            {{ getLanguageName(language) }}
-          </option>
-        </select>
-      </div>
 
-      <div className="cs1 e12">
-        <div class="header">Auth key</div>
-        <input type="password" className="input" v-model="authKey" />
-      </div>
-      <div class="cs1 ce12" style="margin-top: var(--space-medium)">
-        <button className="button button-primary button-small" @click="saveSettings">
-          Save
-        </button>
-      </div>
-    </div>
+    <div class="footer">Version: {{ version }}</div>
   </div>
 </template>
 
@@ -95,6 +99,7 @@ import {
   availableLanguages,
   getFullLanguagesNameFromShortHandle,
 } from "./utils";
+import { version } from "../package.json";
 
 export default defineComponent({
   components: { SelectionDebugComponent, ItemTable },
@@ -107,6 +112,9 @@ export default defineComponent({
       authKey: localStorage.getItem("mbt_auth_key") || "",
       selection: null,
       polling: null,
+      version,
+      pluralizeItems,
+      getFullLanguagesNameFromShortHandle,
     };
   },
   mounted() {
@@ -205,32 +213,42 @@ export default defineComponent({
     saveSettings() {
       localStorage.setItem("mbt_auth_key", this.authKey);
       localStorage.setItem("mbt_target_language", this.targetLanguage);
-    },
-    pluralize(count: number) {
-      return pluralizeItems(count);
-    },
-    getLanguageName(language: string) {
-      return getFullLanguagesNameFromShortHandle(language);
-    },
+    }
   },
 });
 </script>
 
-<style>
-.selection-debug-component {
-  margin-bottom: var(--space-medium);
-}
-
-.selection-header {
+<style lang="scss" scoped>
+.app {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
-  margin-top: var(--space-medium);
-  margin-bottom: var(--space-xsmall);
-}
+  align-items: space-between;
+  height: calc(100vh - 3rem);
 
-.header {
-  margin: var(--space-xsmall) 0;
+  .content {
+    .selection-debug-component {
+      margin-bottom: var(--space-medium);
+    }
+
+    .selection-header {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: var(--space-medium);
+      margin-bottom: var(--space-xsmall);
+    }
+
+    .header {
+      margin: var(--space-xsmall) 0;
+    }
+  }
+
+  .footer {
+    align-self: flex-end;
+    color: #b2b2b2;
+    font-size: 0.8rem;
+  }
 }
 </style>
