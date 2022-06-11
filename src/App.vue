@@ -56,7 +56,7 @@
       <div v-else>
         <div className="cs1 e12" style="margin-top: var(--space-medium)">
           <div class="header">Target Language</div>
-          <select className="select" v-model="targetLanguage">
+          <select className="select select-small" v-model="targetLanguage">
             <option v-for="language in availableLanguages" :value="language">
               {{ getFullLanguagesNameFromShortHandle(language) }}
             </option>
@@ -65,7 +65,7 @@
 
         <div className="cs1 e12">
           <div class="header">Auth key</div>
-          <input type="password" className="input" v-model="authKey" />
+          <input type="password" className="input input-small" v-model="authKey" />
         </div>
         <div class="cs1 ce12" style="margin-top: var(--space-medium)">
           <button className="button button-primary button-small" @click="saveSettings">
@@ -242,6 +242,12 @@ export default defineComponent({
 
     .header {
       margin: var(--space-xsmall) 0;
+    }
+
+    .select-small {
+      padding: var(--space-xsmall) 12px var(--space-xsmall);
+      font-size: var(--font-soze-medium);
+      height: 36px;
     }
   }
 
