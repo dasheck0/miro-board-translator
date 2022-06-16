@@ -66,6 +66,11 @@
         <div className="cs1 e12">
           <div class="header">Auth key</div>
           <input type="password" className="input input-small" v-model="authKey" />
+          <div class="hint">
+            Don't have an auth key yet? Get one
+            <a class="link link-primary" href="https://www.deepl.com/docs-api/accessing-the-api/authentication/" target="_blank"> here</a
+            >!
+          </div>
         </div>
         <div class="cs1 ce12" style="margin-top: var(--space-medium)">
           <button className="button button-primary button-small" @click="saveSettings">
@@ -213,7 +218,7 @@ export default defineComponent({
     saveSettings() {
       localStorage.setItem("mbt_auth_key", this.authKey);
       localStorage.setItem("mbt_target_language", this.targetLanguage);
-    }
+    },
   },
 });
 </script>
@@ -248,6 +253,12 @@ export default defineComponent({
       padding: var(--space-xsmall) 12px var(--space-xsmall);
       font-size: var(--font-soze-medium);
       height: 36px;
+    }
+
+    .hint {
+      font-size: 0.8rem;
+      margin-top: var(--space-xsmall);
+      color: #666;
     }
   }
 
