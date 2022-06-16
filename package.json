@@ -13,6 +13,7 @@
     "serve": "vite preview",
     "prepare": "husky install",
     "changelog": "conventional-changelog -i CHANGELOG.md -s -r 0",
+    "postchangelog": "git add CHANGELOG.md && git commit -m \"chore: update changelog file\" CHANGELOG.md",
     "patch": "npm version patch",
     "postpatch": "git add package* && git commit -m \"chore: set version to $npm_package_version\" package*",
     "minor": "npm version minor",
