@@ -199,6 +199,8 @@ export default defineComponent({
       this.selection = await miro.board.getSelection();
     },
     async translate() {
+      this.log("Starting translation ...");
+
       const getRelevanteItemTypes = ['sticky_note', 'shape', 'text', 'card', 'frame'];
       const selection = await miro.board.getSelection();
 
