@@ -1,3 +1,17 @@
+# [1.1.0](https://github.com/dasheck0/miro-board-translator/compare/v1.0.1...v1.1.0) (2022-06-25)
+
+
+### chore
+
+* update changelog and add postchangelog script ([e70d896](https://github.com/dasheck0/miro-board-translator/commit/e70d8966e09a48e6d5315fb5961d8a7efc18b4a1))
+* use eslint preset when generating changelog file ([470d1cf](https://github.com/dasheck0/miro-board-translator/commit/470d1cf8cd565bf02b73d8ee6abfb3cde5d33d6a))
+
+### feat
+
+* add basic notifications for plugin ([04c97cd](https://github.com/dasheck0/miro-board-translator/commit/04c97cd232d933f522bdfe89dff8118b62a1d951))
+
+
+
 ## [1.0.1](https://github.com/dasheck0/miro-board-translator/compare/c3adb547038728c70654e5c720c183ae45dda1c6...v1.0.1) (2022-06-16)
 
 
