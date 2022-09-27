@@ -29,10 +29,13 @@
             <button
               className="button button-primary button-small"
               @click="translate"
-              :disabled="!selection || selection.length === 0"
+              :disabled="!translateButtonEnabled"
             >
               Translate selection
             </button>
+            <div class="p-medium" v-if="currentLanguage">
+              Translating to {{ getFullLanguagesNameFromShortHandle(currentLanguage) }}
+            </div>
           </div>
           <div class="cs11 ce12" style="margin-top: var(--space-medium)" v-if="false">
             <button class="button-icon icon-refresh" type="button" @click="fetchCurrentSelection"></button>
@@ -70,7 +73,7 @@
             @change="() => (dirtySettings = true)"
           />
           <div class="hint">
-            Don't have an auth key yet? Get one
+            You need a DeepL account and an auth key to use this plugin. Don't have an auth key yet? Get one
             <a
               class="link link-primary"
               href="https://www.deepl.com/docs-api/accessing-the-api/authentication/"
@@ -125,6 +128,8 @@ interface AppData {
   notificationType: NotificationType;
   notificationTimer: NodeJS.Timer | null;
   dirtySettings: boolean;
+  currentLanguage: string;
+  configurationDone: boolean;
 }
 
 export default defineComponent({
@@ -145,16 +150,25 @@ export default defineComponent({
       notificationType: NotificationType.NEUTRAL,
       notificationTimer: null,
       dirtySettings: false,
+      currentLanguage: '',
+      configurationDone: false,
     };
   },
   mounted() {
     this.polling = setInterval(() => {
       this.fetchCurrentSelection();
     }, 500);
+
+    this.configurationDone = !!localStorage.getItem('mbt_target_language') && !!localStorage.getItem('mbt_auth_key');
+    this.currentLanguage = localStorage.getItem('mbt_target_language') || '';
+
+    if (!this.configurationDone) {
+      this.logError('You have to configure the plugin before using it. Please go to the settings tab.', true);
+    }
   },
   computed: {
     translateButtonEnabled(): boolean {
-      return !!localStorage.getItem('mbt_auth_key') && !!localStorage.getItem('mbt_target_language');
+      return this.configurationDone && !!this.selection && this.selection.length > 0;
     },
     notificationColor(): string {
       switch (this.notificationType) {
@@ -177,7 +191,7 @@ export default defineComponent({
         this.logError('You have unsaved changes');
       }
     },
-    log(message: string, type: NotificationType = NotificationType.NEUTRAL) {
+    log(message: string, type: NotificationType = NotificationType.NEUTRAL, sticky = false) {
       this.notificationText = message;
       this.notificationType = type;
 
@@ -185,21 +199,26 @@ export default defineComponent({
         clearInterval(this.notificationTimer);
       }
 
-      this.notificationTimer = setInterval(() => {
-        this.notificationText = '';
-      }, 3000);
+      if (!sticky) {
+        this.notificationTimer = setInterval(() => {
+          this.notificationText = '';
+        }, 3000);
+      }
     },
-    logSuccess(message: string) {
-      this.log(message, NotificationType.SUCCESS);
+    logSuccess(message: string, sticky = false) {
+      this.log(message, NotificationType.SUCCESS, sticky);
     },
-    logError(message: string) {
-      this.log(message, NotificationType.ERROR);
+    logError(message: string, sticky = false) {
+      this.log(message, NotificationType.ERROR, sticky);
+    },
+    clearMessage() {
+      this.notificationText = '';
     },
     async fetchCurrentSelection() {
       this.selection = await miro.board.getSelection();
     },
     async translate() {
-      this.log("Starting translation ...");
+      this.log('Starting translation ...');
 
       const getRelevanteItemTypes = ['sticky_note', 'shape', 'text', 'card', 'frame'];
       const selection = await miro.board.getSelection();
@@ -282,8 +301,16 @@ export default defineComponent({
       localStorage.setItem('mbt_auth_key', this.authKey);
       localStorage.setItem('mbt_target_language', this.targetLanguage);
 
+      this.currentLanguage = this.targetLanguage;
+
       this.dirtySettings = false;
+      this.clearMessage();
       this.logSuccess('Settings were saved');
+
+      this.configurationDone = !!localStorage.getItem('mbt_target_language') && !!localStorage.getItem('mbt_auth_key');
+      if (!this.configurationDone) {
+        this.logError('You have to configure the plugin before using it. Please go to the settings tab.', true);
+      }
     },
   },
 });
