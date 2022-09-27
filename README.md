@@ -1,4 +1,4 @@
-# Miro Board Translator
+# Board Translator
 <!-- section: Introduction -->
 <!-- Describe briefly what your software is. What problem does it solve? At what target audience is it aimed? -->
 This is a miro plugin that translates items of miro boards using [DeepL](https://deepl.com). If you just want to install it you can use the following [link](https://miro.com/oauth/authorize/?response_type=code&client_id=3458764525398176649&redirect_uri=%2Fconfirm-app-install%2F).
@@ -8,7 +8,7 @@ This is a miro plugin that translates items of miro boards using [DeepL](https:/
 ## How to use
 <!-- section: Overview -->
 <!-- Give an architectural overview of your software. Is is interesting for other developers, who wants to catch on and want to developer features or fix bugs of your software. Do not go into too much detail. There are other documents for this. -->
-When you open the plugin for the first time, you need to add a deepl auth key. Register at [deepl.com] (https://www.deepl.com/pro?cta=menu-pro) and choose the Deepl API Free plan, which is free. This is sufficient for most use cases as it provides 500000 characters per month for free. You will be given an authentication key, which you enter on the Settings tab. On the left side of the screen you will find a toolbar. Click the "More" icon (two arrows pointing to the right), which opens a panel. Look for the Miro Board Translator app and click on it. This will open the app panel. Select the Settings tab and enter your auth key. Select the target language. DeepL automatically detects the source language. 
+When you open the plugin for the first time, you need to add a deepl auth key. Register at [deepl.com] (https://www.deepl.com/pro?cta=menu-pro) and choose the Deepl API Free plan, which is free. This is sufficient for most use cases as it provides 500000 characters per month for free. You will be given an authentication key, which you enter on the Settings tab. On the left side of the screen you will find a toolbar. Click the "More" icon (two arrows pointing to the right), which opens a panel. Look for the Board Translator app and click on it. This will open the app panel. Select the Settings tab and enter your auth key. Select the target language. DeepL automatically detects the source language. 
 
 Then select the items you want to translate and click the Translate button on the Plugin tab.
 
