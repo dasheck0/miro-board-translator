@@ -83,7 +83,7 @@
             >!
           </div>
           <label class="checkbox">
-            <input type="checkbox" tabindex="0" v-model="useDeepLAPIPro" />
+            <input type="checkbox" tabindex="0" v-model="useDeepLAPIPro" @change="() => (dirtySettings = true)"/>
             <span>Use DeepL API Pro (Uncheck if you are using DeepL API Free)</span>
           </label>
         </div>
@@ -172,6 +172,16 @@ export default defineComponent({
     if (!this.configurationDone) {
       this.logError('You have to configure the plugin before using it. Please go to the settings tab.', true);
     }
+  },
+  watch: {
+    dirtySettings: function (isDirty: boolean) {
+      console.log("Dirty settings", isDirty)
+
+      if (isDirty) {
+        this.logError('You have unsaved changes', true);
+      }
+    },
+
   },
   computed: {
     translateButtonEnabled(): boolean {
