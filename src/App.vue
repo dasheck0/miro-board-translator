@@ -82,6 +82,10 @@
               here</a
             >!
           </div>
+          <label class="checkbox">
+            <input type="checkbox" tabindex="0" v-model="useDeepLAPIPro" />
+            <span>Use DeepL API Pro (Uncheck if you are using DeepL API Free)</span>
+          </label>
         </div>
         <div class="cs1 ce12" style="margin-top: var(--space-medium)">
           <button className="button button-primary button-small" @click="saveSettings">Save</button>
@@ -130,6 +134,7 @@ interface AppData {
   dirtySettings: boolean;
   currentLanguage: string;
   configurationDone: boolean;
+  useDeepLAPIPro: boolean;
 }
 
 export default defineComponent({
@@ -152,6 +157,7 @@ export default defineComponent({
       dirtySettings: false,
       currentLanguage: '',
       configurationDone: false,
+      useDeepLAPIPro: false,
     };
   },
   mounted() {
@@ -161,6 +167,7 @@ export default defineComponent({
 
     this.configurationDone = !!localStorage.getItem('mbt_target_language') && !!localStorage.getItem('mbt_auth_key');
     this.currentLanguage = localStorage.getItem('mbt_target_language') || '';
+    this.useDeepLAPIPro = localStorage.getItem('mbt_use_deepl_api_pro') === 'true';
 
     if (!this.configurationDone) {
       this.logError('You have to configure the plugin before using it. Please go to the settings tab.', true);
@@ -239,8 +246,12 @@ export default defineComponent({
     },
     async translateText(text: string): Promise<string> {
       try {
+        const proAPI = localStorage.getItem('mbt_use_deepl_api_pro') === 'true';
+
+        console.log("Using proAPI", proAPI);
+
         const { data } = await translate({
-          free_api: true,
+          free_api: !proAPI,
           text,
           target_lang: (localStorage.getItem('mbt_target_language') as DeeplLanguages) || 'EN',
           auth_key: localStorage.getItem('mbt_auth_key') || '',
@@ -300,6 +311,7 @@ export default defineComponent({
     saveSettings() {
       localStorage.setItem('mbt_auth_key', this.authKey);
       localStorage.setItem('mbt_target_language', this.targetLanguage);
+      localStorage.setItem('mbt_use_deepl_api_pro', this.useDeepLAPIPro ? 'true' : 'false');
 
       this.currentLanguage = this.targetLanguage;
 
@@ -351,6 +363,7 @@ export default defineComponent({
     .hint {
       font-size: 0.8rem;
       margin-top: var(--space-xsmall);
+      margin-bottom: var(--space-small);
       color: #666;
     }
   }
