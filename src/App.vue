@@ -82,10 +82,6 @@
               here</a
             >!
           </div>
-          <label class="checkbox">
-            <input type="checkbox" tabindex="0" v-model="useDeepLAPIPro" @change="() => (dirtySettings = true)"/>
-            <span>Use DeepL API Pro (Uncheck if you are using DeepL API Free)</span>
-          </label>
         </div>
         <div class="cs1 ce12" style="margin-top: var(--space-medium)">
           <button className="button button-primary button-small" @click="saveSettings">Save</button>
@@ -104,7 +100,8 @@
 
 <script lang="ts">
 import { Item, StickyNote, Shape, Text, Frame, Card } from '@mirohq/websdk-types';
-import translate, { DeeplLanguages } from 'deepl';
+// import translate, { DeeplLanguages } from 'deepl';
+import TranslationApi, { SupportedLanguages } from './api';
 import { defineComponent } from 'vue';
 import SelectionDebugComponent from './components/SelectionDebugComponent.vue';
 import ItemTable from './components/ItemTable.vue';
@@ -134,7 +131,6 @@ interface AppData {
   dirtySettings: boolean;
   currentLanguage: string;
   configurationDone: boolean;
-  useDeepLAPIPro: boolean;
 }
 
 export default defineComponent({
@@ -157,7 +153,6 @@ export default defineComponent({
       dirtySettings: false,
       currentLanguage: '',
       configurationDone: false,
-      useDeepLAPIPro: false,
     };
   },
   mounted() {
@@ -167,7 +162,6 @@ export default defineComponent({
 
     this.configurationDone = !!localStorage.getItem('mbt_target_language') && !!localStorage.getItem('mbt_auth_key');
     this.currentLanguage = localStorage.getItem('mbt_target_language') || '';
-    this.useDeepLAPIPro = localStorage.getItem('mbt_use_deepl_api_pro') === 'true';
 
     if (!this.configurationDone) {
       this.logError('You have to configure the plugin before using it. Please go to the settings tab.', true);
@@ -175,17 +169,17 @@ export default defineComponent({
   },
   watch: {
     dirtySettings: function (isDirty: boolean) {
-      console.log("Dirty settings", isDirty)
+      console.log('Dirty settings', isDirty);
 
       if (isDirty) {
         this.logError('You have unsaved changes', true);
       }
     },
-
   },
   computed: {
     translateButtonEnabled(): boolean {
-      return this.configurationDone && !!this.selection && this.selection.length > 0;
+      return true;
+      // return this.configurationDone && !!this.selection && this.selection.length > 0;
     },
     notificationColor(): string {
       switch (this.notificationType) {
@@ -240,38 +234,40 @@ export default defineComponent({
       const getRelevanteItemTypes = ['sticky_note', 'shape', 'text', 'card', 'frame'];
       const selection = await miro.board.getSelection();
 
-      await Promise.all(
-        selection.map(async (item) => {
-          if (getRelevanteItemTypes.includes(item.type)) {
-            const text = this.getTextFromItem(item);
-            const translatedText = await this.translateText(text);
+      try {
+        await Promise.all(
+          selection.map(async (item) => {
+            if (getRelevanteItemTypes.includes(item.type)) {
+              const text = this.getTextFromItem(item);
+              const translatedText = await this.translateText(text);
 
-            this.setItemToText(item, translatedText);
-            await item.sync();
-          }
-        })
-      );
+              this.setItemToText(item, translatedText);
+              await item.sync();
+            }
+          })
+        );
 
-      this.logSuccess('Successfully translated your content');
+        this.logSuccess('Successfully translated your content');
+      } catch (error: any) {
+        this.logError('There was an error translating your content: ' + error.message);
+      }
     },
     async translateText(text: string): Promise<string> {
       try {
-        const proAPI = localStorage.getItem('mbt_use_deepl_api_pro') === 'true';
-
-        console.log("Using proAPI", proAPI);
-
-        const { data } = await translate({
-          free_api: !proAPI,
+        const client = new TranslationApi(localStorage.getItem('mbt_auth_key') || '');
+        const translation = await client.translate(
           text,
-          target_lang: (localStorage.getItem('mbt_target_language') as DeeplLanguages) || 'EN',
-          auth_key: localStorage.getItem('mbt_auth_key') || '',
-        });
+          (localStorage.getItem('mbt_target_language') as SupportedLanguages) || 'EN'
+        );
 
-        return data.translations[0].text;
+        if (!translation.success) {
+          throw new Error(translation.data);
+        }
+
+        return translation.data.text;
       } catch (error) {
         console.error(error);
-        this.logError('There was an error while translating your content');
-        return text;
+        return Promise.reject(error);
       }
     },
     getTextFromItem(item: Item): string {
@@ -321,7 +317,6 @@ export default defineComponent({
     saveSettings() {
       localStorage.setItem('mbt_auth_key', this.authKey);
       localStorage.setItem('mbt_target_language', this.targetLanguage);
-      localStorage.setItem('mbt_use_deepl_api_pro', this.useDeepLAPIPro ? 'true' : 'false');
 
       this.currentLanguage = this.targetLanguage;
 

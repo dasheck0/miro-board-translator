@@ -1,6 +1,6 @@
 {
   "name": "board-translator",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "licence": "MIT",
   "description": "This is a miro plugin that translates items of miro boards using deepl.com",
   "author": {
@@ -22,7 +22,7 @@
     "postmajor": "git add package* && git commit -m \"chore: set version to $npm_package_version\" package*"
   },
   "dependencies": {
-    "deepl": "^1.0.13",
+    "axios": "^1.4.0",
     "lodash.groupby": "^4.6.0",
     "mirotone": "2.0.5",
     "vue": "3.2.25"
