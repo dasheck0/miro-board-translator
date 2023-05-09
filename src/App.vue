@@ -178,8 +178,7 @@ export default defineComponent({
   },
   computed: {
     translateButtonEnabled(): boolean {
-      return true;
-      // return this.configurationDone && !!this.selection && this.selection.length > 0;
+      return this.configurationDone && !!this.selection && this.selection.length > 0;
     },
     notificationColor(): string {
       switch (this.notificationType) {
