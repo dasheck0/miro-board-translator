@@ -1,6 +1,6 @@
 {
   "name": "board-translator",
-  "version": "1.1.6",
+  "version": "1.2.0",
   "licence": "MIT",
   "description": "This is a miro plugin that translates items of miro boards using deepl.com",
   "author": {
